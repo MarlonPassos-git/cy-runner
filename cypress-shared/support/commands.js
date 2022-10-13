@@ -16,7 +16,7 @@ function closeModalIfOpened() {
 }
 
 Cypress.Commands.add('closeMenuIfOpened', () => {
-  cy.get('button[class*=closeIconButton]').then(($el) => {
+  cy.get(selectors.QuickOrder).then(($el) => {
     if (Cypress.dom.isVisible($el)) {
       cy.get('button[class*=closeIconButton]').first().click()
     }
