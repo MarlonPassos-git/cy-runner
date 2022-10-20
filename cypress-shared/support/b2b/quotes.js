@@ -25,11 +25,7 @@ export function fillQuoteInformation({
 
       cy.get(selectors.CreateQuote).last().should('be.visible').click()
 
-      cy.get(selectors.CurrencyContainer, { timeout: 15000 }).should(
-        'be.visible'
-      )
-
-      cy.get(selectors.QuoteTotal, { timeout: 8000 })
+      cy.get(selectors.QuoteTotal, { timeout: 15000 })
         .first()
         .should('not.contain', '0.00')
 
