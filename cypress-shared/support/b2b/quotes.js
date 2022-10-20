@@ -25,10 +25,6 @@ export function fillQuoteInformation({
 
       cy.get(selectors.CreateQuote).last().should('be.visible').click()
 
-      cy.get(selectors.QuoteTotal, { timeout: 15000 })
-        .first()
-        .should('not.contain', '0.00')
-
       cy.get(selectors.QuoteName).should('be.visible').clear().type(quoteEnv)
       if (notes) {
         cy.get(selectors.Notes).should('be.visible').clear().type(notes)
