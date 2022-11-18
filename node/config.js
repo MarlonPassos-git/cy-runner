@@ -50,8 +50,8 @@ exports.getConfig = async (configFile) => {
     config.base.cypress.devMode = false
     config.base.cypress.runHeaded = false
     config.base.cypress.quiet = true
-    config.base.cypress.videoUploadOnPasses = false
-    config.base.cypress.trashAssetsBeforeRuns = false
+    // config.base.cypress.videoUploadOnPasses = false
+    // config.base.cypress.trashAssetsBeforeRuns = false
     config.base.cypress.watchForFileChanges = false
     config.base.cypress.browser = 'chrome'
     // Inject envs
