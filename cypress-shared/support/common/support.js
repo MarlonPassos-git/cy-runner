@@ -272,7 +272,11 @@ export function updateShippingInformation({
 
   cy.addDelayBetweenRetries(10000)
   cy.setorderFormDebugItem()
-  cy.get(selectors.ProceedtoPaymentBtn).should('be.visible').click()
+  if (cy.state('runnable')._currentRetry > 2) {
+    cy.log("Let's click button then")
+    cy.get(selectors.ProceedtoPaymentBtn).should('be.visible').click()
+  }
+
   cy.get(selectors.CartTimeline).should('be.visible').click({ force: true })
   startShipping()
   cy.intercept('https://rc.vtex.com/v8').as('v8')
