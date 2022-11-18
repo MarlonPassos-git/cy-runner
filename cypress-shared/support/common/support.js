@@ -169,16 +169,16 @@ function fillAddressLine1(deliveryScreenAddress) {
 
 function startShipping() {
   cy.get('body').then(($body) => {
-    if ($body.find(selectors.ShippingCalculateLink).length) {
-      // Contact information needs to be filled
-      cy.get(selectors.ShippingCalculateLink).should('be.visible').click()
-    } else if ($body.find(selectors.DeliveryAddress).length) {
+    if ($body.find(selectors.DeliveryAddress).length) {
       // Contact Information already filled
       cy.get(selectors.DeliveryAddress).then(($el) => {
         if (Cypress.dom.isVisible($el)) {
           cy.get(selectors.DeliveryAddress).should('be.visible').click()
         }
       })
+    } else if ($body.find(selectors.ShippingCalculateLink).length) {
+      // Contact information needs to be filled
+      cy.get(selectors.ShippingCalculateLink).should('be.visible').click()
     }
   })
 }
