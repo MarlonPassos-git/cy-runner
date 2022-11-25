@@ -167,16 +167,16 @@ function fillAddressLine1(deliveryScreenAddress) {
 
 function startShipping() {
   cy.get('body').then(($body) => {
-    if ($body.find(selectors.ShippingCalculateLink).length) {
-      // Contact information needs to be filled
-      cy.get(selectors.ShippingCalculateLink).should('be.visible').click()
-    } else if ($body.find(selectors.DeliveryAddress).length) {
+    if ($body.find(selectors.DeliveryAddress).length) {
       // Contact Information already filled
       cy.get(selectors.DeliveryAddress).then(($el) => {
         if (Cypress.dom.isVisible($el)) {
           cy.get(selectors.DeliveryAddress).should('be.visible').click()
         }
       })
+    } else if ($body.find(selectors.ShippingCalculateLink).length) {
+      // Contact information needs to be filled
+      cy.get(selectors.ShippingCalculateLink).should('be.visible').click()
     }
   })
 }
@@ -270,6 +270,11 @@ export function updateShippingInformation({
 
   cy.addDelayBetweenRetries(10000)
   cy.setorderFormDebugItem()
+  if (cy.state('runnable')._currentRetry > 2) {
+    cy.log("Let's click button then")
+    cy.get(selectors.ProceedtoPaymentBtn).should('be.visible').click()
+  }
+
   cy.get(selectors.CartTimeline).should('be.visible').click({ force: true })
   startShipping()
   cy.intercept('https://rc.vtex.com/v8').as('v8')
