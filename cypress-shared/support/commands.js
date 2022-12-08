@@ -223,7 +223,7 @@ Cypress.Commands.add('openStoreFront', (login = false) => {
   scroll()
 })
 
-Cypress.Commands.add('addNewLocation', (country, postalCode, street, city) => {
+Cypress.Commands.add('addNewLocation', (country, postalCode) => {
   cy.openStoreFront()
   cy.get(selectors.addressContainer).should('be.visible').click()
   cy.get(selectors.countryDropdown).select(country)
@@ -231,21 +231,10 @@ Cypress.Commands.add('addNewLocation', (country, postalCode, street, city) => {
     .first()
     .clear()
     .should('be.visible')
-    .type(postalCode)
-  cy.get(selectors.Address)
-    .contains('Address Line 1')
-    .parent()
-    .within(() => {
-      cy.get(selectors.InputText).clear().type(street)
-    })
-  cy.get(selectors.Address)
-    .contains('City')
-    .parent()
-    .within(() => {
-      cy.get(selectors.InputText).clear().type(city)
-    })
-  cy.waitForGraphql('setRegionId', selectors.SaveButton)
-  cy.once('uncaught:exception', () => false)
+    .type(postalCode, { delay: 50 })
+  cy.get(selectors.SaveButtonInChangeLocationPopUp).should('be.visible')
+
+  cy.waitForGraphql('setRegionId', selectors.SaveButtonInChangeLocationPopUp)
 })
 
 Cypress.Commands.add(

@@ -17,7 +17,7 @@ export default {
     country: 'United States',
     postalCode: '21287',
     city: 'Baltimore',
-    address: '1800 ORLEANS ST , BALTIMORE, MD',
+    address: '1800 ORLEANS ST',
     state: 'Maryland',
   },
   location: {
@@ -26,8 +26,8 @@ export default {
     city: 'Chennai',
   },
   UsDetails1: {
-    country1: 'United States',
-    postalCode1: '91766',
+    country: 'United States',
+    postalCode: '91766',
     city: 'Pomona',
   },
   UsDetails2: {
@@ -43,7 +43,7 @@ export default {
   UsDetails4: {
     country: 'United States',
     postalCode: '90290',
-    city: 'Toppanga',
-    address: 'USA Kerry Ln Topanga',
+    city: 'Topanga',
+    address: 'Kerry Ln,Topanga',
   },
 }

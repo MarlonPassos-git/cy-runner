@@ -3,23 +3,16 @@ import selectors from '../common/selectors'
 import { updateRetry } from '../common/support'
 import { getPickupPoints, deletePickupPoint } from './pickup-points.api'
 
-export function verifyUpdatedAddress(postalCode, address, city) {
+export function verifyUpdatedAddress(postalCode, address, city = null) {
   it('Verify on click to postal code it opens the location popup', () => {
-    cy.get(selectors.AvailabilityHeader).click()
+    cy.get(selectors.AvailabilityHeader).should('be.visible').click()
     cy.get(selectors.AddressModelLayout).should('be.visible')
     cy.get(selectors.countryDropdown).select('USA')
-    cy.get(selectors.addressInputContainer).eq(0).clear().type(postalCode)
-    if (city) {
-      cy.get(selectors.Address)
-        .contains('City')
-        .parent()
-        .within(() => {
-          cy.get(selectors.InputText)
-            .should('not.have.value', '')
-            .clear()
-            .type(city)
-        })
-    }
+    cy.get(selectors.addressInputContainer)
+      .eq(0)
+      .clear()
+      .type(postalCode, { delay: 50 })
+    cy.get(selectors.SaveButtonInChangeLocationPopUp).should('be.visible')
     if (address) {
       cy.get(selectors.Address)
         .contains('Address Line 1')
@@ -28,7 +21,22 @@ export function verifyUpdatedAddress(postalCode, address, city) {
           cy.get(selectors.InputText).clear().type(address, { delay: 50 })
         })
     }
-    cy.waitForGraphql('setRegionId', selectors.SaveButton)
+
+    if (city) {
+      cy.get(selectors.Address)
+        .contains('City')
+        .parent()
+        .within(() => {
+          cy.get(selectors.InputText)
+            .should('be.visible')
+            .should('not.have.value', '')
+            .clear()
+            .type(city, { delay: 50 })
+        })
+    }
+
+    cy.waitForGraphql('setRegionId', selectors.SaveButtonInChangeLocationPopUp)
+    cy.get(selectors.countryDropdown).should('not.exist')
     cy.once('uncaught:exception', () => false)
   })
   it('Verify updated address is shown in the screen', updateRetry(2), () => {

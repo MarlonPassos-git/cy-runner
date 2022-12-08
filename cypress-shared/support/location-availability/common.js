@@ -11,6 +11,7 @@ export function verifyHomePage(city, postalCode, distance = false) {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(10000)
     cy.get(selectors.addressContainer).should('be.visible')
+    cy.get(selectors.addressContainerForProduct).should('be.visible')
     if (distance) {
       cy.get(selectors.Distance).should('not.exist')
       cy.get(selectors.shippingInfo).contains('Get it in')

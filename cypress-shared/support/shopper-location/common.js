@@ -13,10 +13,10 @@ export function verifyShopperLocation() {
 export function addLocation(data) {
   cy.intercept('**/rc.vtex.com.br/api/events').as('events')
   cy.visit('/', mockLocation(data.lat, data.long))
-  cy.wait('@events')
   cy.get(selectors.ProfileLabel, { timeout: 10000 })
     .should('be.visible')
     .should('have.contain', `Hello,`)
+  cy.wait('@events')
   scroll()
   cy.get(selectors.addressContainer).click()
   cy.get(selectors.countryDropdown).select(data.country)
@@ -34,7 +34,9 @@ export function addLocation(data) {
     cy.once('uncaught:exception', () => {
       return false
     })
-    cy.get(selectors.SaveButton).should('be.visible').click()
+    cy.get(selectors.SaveButtonInChangeLocationPopUp)
+      .should('be.visible')
+      .click()
     cy.wait('@setRegionId', { timeout: 10000 })
   })
 }
@@ -53,37 +55,50 @@ export function verifyLocation(lat, long) {
   cy.get(selectors.ChangeLocationButton).click()
 }
 
+export function fillAddressInPopUp(address) {
+  cy.get(selectors.addressContainer, { timeout: 20000 })
+    .should('be.visible')
+    .click()
+  cy.get(selectors.findMyLocation).click()
+
+  cy.get(selectors.countryDropdown).select(address.country)
+  // eslint-disable-next-line cypress/no-unnecessary-waiting
+  cy.get(selectors.addressInputContainer)
+    .first()
+    .should('not.be.disabled')
+    .clear()
+    .type(address.postalCode, { delay: 100 })
+  autocomplete(address.city, address.state)
+  cy.get(selectors.SaveButtonInChangeLocationPopUp)
+    .should('be.visible')
+    .click()
+    .should(() => {
+      cy.waitForGraphql('Session')
+      expect(localStorage.getItem('orderform')).not.to.be.empty
+    })
+
+  cy.get(selectors.countryDropdown).should('not.exist')
+  cy.get(selectors.addressContainer).should('be.visible')
+}
+
 export function addAddress(prefix, { address, lat, long }) {
   it(
     `${prefix} - Go to store front and add shipping address`,
     updateRetry(1),
     () => {
       cy.intercept('**/rc.vtex.com.br/api/events').as('events')
-      cy.visit('/', mockLocation(lat, long))
-      cy.wait('@events')
+      if (lat && long) {
+        cy.visit('/', mockLocation(lat, long))
+      } else {
+        cy.visit('/')
+      }
+
       cy.get(selectors.ProfileLabel, { timeout: 10000 })
         .should('be.visible')
         .should('have.contain', `Hello,`)
+      cy.waitForGraphql('Session')
       scroll()
-      cy.get(selectors.addressContainer, { timeout: 20000 })
-        .should('be.visible')
-        .click()
-      cy.get(selectors.findMyLocation).click()
-
-      cy.get(selectors.countryDropdown).select(address.country)
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.get(selectors.addressInputContainer)
-        .first()
-        .should('not.be.disabled')
-        .clear()
-        .type(address.postalCode, { delay: 100 })
-      autocomplete(address.city, address.state)
-      cy.get(selectors.saveButton)
-        .find('button')
-        .click()
-        .should(() => {
-          expect(localStorage.getItem('orderform')).not.to.be.empty
-        })
+      fillAddressInPopUp(address)
     }
   )
 }
@@ -91,8 +106,8 @@ export function addAddress(prefix, { address, lat, long }) {
 export function autocomplete(city, province) {
   cy.getVtexItems().then((vtex) => {
     cy.intercept('POST', vtex.baseUrl).as('events')
-    cy.wait('@events')
     cy.intercept('GET', '**=US').as('maps')
+    cy.wait('@events')
     cy.get(`div[class*=addressInputContainer] input[value="${city}"]`)
       .invoke('val')
       .should('equal', city)
