@@ -20,6 +20,13 @@ Cypress.Commands.add('closeMenuIfOpened', () => {
   cy.get('button[class*=closeIconButton]').then(($el) => {
     if (Cypress.dom.isVisible($el)) {
       cy.get('button[class*=closeIconButton]').first().click()
+      cy.get('button[id*=remove]').then(($removeElement) => {
+        if (Cypress.dom.isVisible($removeElement)) {
+          cy.get('button[id*=remove]')
+            .should('be.visible')
+            .click({ multiple: true })
+        }
+      })
     }
   })
 })
